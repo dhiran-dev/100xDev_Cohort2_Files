@@ -20,41 +20,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
   class Platform {
     constructor(newPlatBottom) {
-      this.left = Math.random() * 315;
+      this.left = Math.random() * 315; //returns number b/w 0 to 315
       this.bottom = newPlatBottom;
       this.visual = document.createElement("div");
 
-      const visual = this.visual;
+      const visual = this.visual; //this.visual is a div element
       visual.classList.add("platform");
-      visual.style.left = this.left + "px";
-      visual.style.bottom = this.bottom + "px";
-      grid.appendChild(visual);
+      visual.style.left = this.left + "px"; //adding left pos to visual - random 0 to 315
+      visual.style.bottom = this.bottom + "px"; //adding bottom pos to visual - reveived from constructor
+      grid.appendChild(visual); //adding the platform to grid
     }
   }
 
   function createPlatforms() {
     for (let i = 0; i < platformCount; i++) {
-      let platGap = 600 / platformCount;
-      let newPlatBottom = 100 + i * platGap;
-      let newPlatform = new Platform(newPlatBottom);
+      let platGap = 600 / platformCount; //600 is total grid height
+      let newPlatBottom = 100 + i * platGap; //bottom pos of each platform
+      let newPlatform = new Platform(newPlatBottom); //platform will be created by class
       platforms.push(newPlatform);
       console.log(platforms);
     }
   }
 
   function movePlatforms() {
+    //move only if doodler is above 200
+    //doodlerBottomSpace = startPoint
     if (doodlerBottomSpace > 200) {
       platforms.forEach((platform) => {
+        // console.log(platform);
         platform.bottom -= 4;
         let visual = platform.visual;
         visual.style.bottom = platform.bottom + "px";
+        //for each platform, modify the bottom so that it appears falls down
 
         if (platform.bottom < 10) {
+          //once platform goes offgrid, remove its class and remove from array
           let firstPlatform = platforms[0].visual;
           firstPlatform.classList.remove("platform");
           platforms.shift();
-          console.log(platforms);
+          //   console.log(platforms);
           score++;
+          //create new platform at top, add it to array
           var newPlatform = new Platform(600);
           platforms.push(newPlatform);
         }
@@ -65,22 +71,24 @@ document.addEventListener("DOMContentLoaded", () => {
   function createDoodler() {
     grid.appendChild(doodler);
     doodler.classList.add("doodler");
-    doodlerLeftSpace = platforms[0].left;
+    doodlerLeftSpace = platforms[0].left; //doodler should start from 1st platform
     doodler.style.left = doodlerLeftSpace + "px";
-    doodler.style.bottom = doodlerBottomSpace + "px";
+    doodler.style.bottom = doodlerBottomSpace + "px"; //doodlerBottomSpace = startPoint
   }
 
   function fall() {
-    isJumping = false;
+    isJumping = false; //to fall jumping should be false
     clearInterval(upTimerId);
     downTimerId = setInterval(function () {
       doodlerBottomSpace -= 5;
       doodler.style.bottom = doodlerBottomSpace + "px";
       if (doodlerBottomSpace <= 0) {
+        //when doodler goes off grid
         gameOver();
       }
       platforms.forEach((platform) => {
         if (
+          //conditions to check if doodler is on platform
           doodlerBottomSpace >= platform.bottom &&
           doodlerBottomSpace <= platform.bottom + 15 &&
           doodlerLeftSpace + 60 >= platform.left &&
@@ -103,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
     upTimerId = setInterval(function () {
       console.log(startPoint);
       console.log("1", doodlerBottomSpace);
-      doodlerBottomSpace += 20;
+      doodlerBottomSpace += 20; //add 20px to bottom of doodler from startpoint
       doodler.style.bottom = doodlerBottomSpace + "px";
       console.log("2", doodlerBottomSpace);
       console.log("s", startPoint);
@@ -122,6 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
     isGoingLeft = true;
     leftTimerId = setInterval(function () {
       if (doodlerLeftSpace >= 0) {
+        //if to avaoid going off grid
+        //let doodlerLeftSpace = 50; initially
         console.log("going left");
         doodlerLeftSpace -= 5;
         doodler.style.left = doodlerLeftSpace + "px";
@@ -138,8 +148,9 @@ document.addEventListener("DOMContentLoaded", () => {
     rightTimerId = setInterval(function () {
       //changed to 313 to fit doodle image
       if (doodlerLeftSpace <= 313) {
+        //if to avaoid going off grid
         console.log("going right");
-        doodlerLeftSpace += 5;
+        doodlerLeftSpace += 5; //adding 5px to left , to move right
         doodler.style.left = doodlerLeftSpace + "px";
       } else moveLeft();
     }, 20);
@@ -166,6 +177,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function gameOver() {
     isGameOver = true;
+    //removing all child if game is over
     while (grid.firstChild) {
       console.log("remove");
       grid.removeChild(grid.firstChild);
@@ -179,6 +191,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function start() {
     if (!isGameOver) {
+      //create platform, doodler, move platform, jump from startpoint
       createPlatforms();
       createDoodler();
       setInterval(movePlatforms, 30);
