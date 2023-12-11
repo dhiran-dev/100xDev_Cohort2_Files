@@ -112,3 +112,5 @@ function callback(a, b) {
   return func2;
 }
 console.log(callback(1, 2));
+
+//https://gist.github.com/hkirat/898ac1da32b6b347a8c0c3e73e1c0666
